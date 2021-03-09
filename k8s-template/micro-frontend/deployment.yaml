@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    artifact.spinnaker.io/location: coding
+    artifact.spinnaker.io/name: enterprise-front
+    artifact.spinnaker.io/type: kubernetes/deployment
+    deployment.kubernetes.io/revision: '5'
+    moniker.spinnaker.io/application: coding-jxteam1
+    moniker.spinnaker.io/cluster: deployment enterprise-front
+  labels:
+    app.kubernetes.io/managed-by: spinnaker
+    app.kubernetes.io/name: coding-jxteam1
+  name: enterprise-front
+  namespace: coding
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: enterprise-front
+  template:
+    metadata:
+      annotations:
+        artifact.spinnaker.io/location: coding
+        artifact.spinnaker.io/name: enterprise-front
+        artifact.spinnaker.io/type: kubernetes/deployment
+        moniker.spinnaker.io/application: coding-jxteam1
+        moniker.spinnaker.io/cluster: deployment enterprise-front
+      labels:
+        app: enterprise-front
+        app.kubernetes.io/managed-by: spinnaker
+        app.kubernetes.io/name: coding-jxteam1
+    spec:
+      containers:
+        - env:
+            - name: PORT
+              value: '4000'
+            - name: NODE_ENV
+              value: staging
+            - name: APP
+              value: enterprise
+            - name: keywords
+              value: >-
+                项目管理、需求管理、缺陷管理、Bug Tracking、Bug管理、代码托管、代码评审、Code
+                Review、敏捷开发、看板、迭代、流水线、Wiki、DevOps、Git、SVN、持续集成、CI、Jenkins、CD、测试管理、自动构建、Pages
+                服务、网页搭建、任务系统、研发管理
+            - name: description
+              value: >-
+                Coding.net 是一个面向开发者的云端开发平台，提供 Git/SVN 代码托管、任务管理、在线 WebIDE、Cloud
+                Studio、开发协作、文件管理、Wiki 管理、提供个人服务及企业版本的服务
+            - name: title
+              value: CODING - 一站式软件研发管理平台
+            - name: favicon
+              value: /static/favicon.ico
+            - name: ga
+              value: UA-65952334-1
+            - name: QINIU_UPLOAD_URL
+              value: 'https://up.qbox.me'
+            - name: OWNER
+              value: coding
+            - name: OWAS_SERVICE_URL
+              value: 'https://owas.coding.net/op/view.aspx'
+            - name: RUNTIME
+              value: 'TRUE'
+            - name: PRIVATE_CLOUD
+              value: 'true'
+            - name: IS_SINGLE_TEAM
+              valueFrom:
+                configMapKeyRef:
+                  key: isSingleTeam
+                  name: app-config
+            - name: HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: hostname
+                  name: app-config
+            - name: AGILE_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: agileClose
+                  name: app-config
+            - name: TESTING_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: testingClose
+                  name: app-config
+            - name: CODE_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: codeClose
+                  name: app-config
+            - name: CI_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: ciClose
+                  name: app-config
+            - name: CD_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: cdClose
+                  name: app-config
+            - name: ARTIFACT_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: artifactClose
+                  name: app-config
+            - name: WIKI_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: wikiClose
+                  name: app-config
+            - name: STATISTICS_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: statisticsClose
+                  name: app-config
+            - name: CODE_ANALYSIS_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: codeAnalysisClose
+                  name: app-config
+            - name: API_DOC_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: apiDocClose
+                  name: app-config
+            - name: FILE_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: fileClose
+                  name: app-config
+            - name: QTA_CLOSE
+              valueFrom:
+                configMapKeyRef:
+                  key: qtaClose
+                  name: app-config
+          image: >-
+            codingcorp-docker.pkg.szv3.devops.jx/jiaxingyinhang/release/enterprise-front
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /signin
+              port: 4000
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: enterprise-front
+          ports:
+            - containerPort: 4000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 4000
+            timeoutSeconds: 3
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          tty: true
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: coding-registry-secret
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

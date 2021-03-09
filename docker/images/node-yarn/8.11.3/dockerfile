@@ -1,0 +1,9 @@
+FROM centos:7
+COPY ./pkg/yarn.repo /etc/yum.repos.d/
+ADD ./pkg/node-v8.11.3-linux-x64.tar.gz /tmp
+RUN mv /tmp/node-v8.11.3-linux-x64 /usr/local/nodejs && \
+    yum clean all && yum makecache && yum install git gcc-c++ make vim -y 
+
+ENV PATH=/usr/local/nodejs/bin:$PATH
+
+RUN npm install yarn gulp -g
