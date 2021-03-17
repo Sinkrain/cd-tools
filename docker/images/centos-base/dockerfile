@@ -1,2 +1,7 @@
 FROM centos:7
-RUN yum install git gcc-c++ make vim -y
+ADD ./pkg/Python-3.6.5.tgz /tmp/
+COPY ./pkg/requirement.txt /tmp/
+RUN yum install git gcc-c++ make vim openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel -y && \
+    mkdir /usr/local/python3 && cd /tmp/Python-3.6.5 && ./configure -prefix=/usr/local/python3 && make && make install && \
+    ln -s /usr/local/python3/bin/python3 /usr/bin/python3 && ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3 && \
+    pip3 install -r /tmp/requirement.txt && rm -rf /tmp/Python-3.6.5* && python3 --version
